@@ -145,18 +145,18 @@ const ThermalPrintableBill = ({ billData = {}, companyDetails = {} }) => {
         </div>
          {totals.hasProducts && (
           <>
-            {/* <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Subtotal:</span>
               <span>{formatCurrency(totals.subtotal)}</span>
-            </div> */}
-            {/* <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>CGST:</span>
               <span>{formatCurrency(totals.gstTotal)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>SGST:</span>
               <span>{formatCurrency(totals.sgstTotal)}</span>
-            </div> */}
+            </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Transport:</span>
               <span>{formatCurrency(totals.transport)}</span>

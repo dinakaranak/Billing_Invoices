@@ -22,7 +22,7 @@
     "date-fns": "^4.1.0",
     "electron": "^36.3.2",
     "formik": "^2.4.6",
-    "framer-motion": "^12.18.1",
+    "framer-motion": "^12.23.13",
     "html5-qrcode": "^2.3.8",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",

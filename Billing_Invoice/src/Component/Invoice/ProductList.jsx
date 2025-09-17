@@ -632,7 +632,7 @@ const handleSubmit = async (e) => {
   // Print bill function
   const handlePrintBill = async (bill) => {
     try {
-      const companyRes = await Api.get('/companies');
+      const companyRes = await api.get('/companies');
       const companyDetails = companyRes.data[0];
 
       const printWindow = window.open('', '_blank');

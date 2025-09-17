@@ -309,10 +309,10 @@ const PrintableBill = ({ billData = {}, companyDetails = {} }) => {
                                             <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>SNO</th>
                                             <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>Product Code</th>
                                             <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>Product Name</th>
-                                            {/* <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>MRP</th> */}
+                                            <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>MRP</th>
                                             <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>Price</th>
-                                            {/* <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>CGST %</th> */}
-                                            {/* <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>SGST %</th> */}
+                                            <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>CGST %</th>
+                                            <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>SGST %</th>
                                             <th className="text-center py-1 font-semibold border-r border-black bg-gray-100" style={{ fontSize: '12px' }}>Qty/Unit</th>
                                             <th className="text-center py-1 font-semibold bg-gray-100" style={{ fontSize: '12px' }}>Total</th>
                                         </tr>
@@ -335,18 +335,18 @@ const PrintableBill = ({ billData = {}, companyDetails = {} }) => {
                                                     <td className="text-center py-1 border-r border-black font-bold" style={{ fontSize: '12px' }}>
                                                         {displayValue(product.name)}
                                                     </td>
-                                                    {/* <td className="text-center py-1 border-r border-black" style={{ fontSize: '12px' }}>
+                                                    <td className="text-center py-1 border-r border-black" style={{ fontSize: '12px' }}>
                                                         {formatCurrency(product.mrpPrice)}
-                                                    </td> */}
+                                                    </td>
                                                     <td className="text-center py-1 border-r border-black" style={{ fontSize: '12px' }}>
                                                         {formatCurrency(basicPrice + product.gstAmount + product.sgstAmount)}
                                                     </td>
-                                                    {/* <td className="text-center py-1 border-r border-black" style={{ fontSize: '12px' }}>
+                                                    <td className="text-center py-1 border-r border-black" style={{ fontSize: '12px' }}>
                                                         {formatPercentage(product.gstAmount)}
                                                     </td>
                                                     <td className="text-center py-1 border-r border-black" style={{ fontSize: '12px' }}>
                                                         {formatPercentage(product.sgstAmount)}
-                                                    </td> */}
+                                                    </td>
                                                     <td className="text-center py-1 border-r border-black font-bold" style={{ fontSize: '12px' }}>
                                                         {quantity}{unit}
                                                     </td>
@@ -364,9 +364,9 @@ const PrintableBill = ({ billData = {}, companyDetails = {} }) => {
                                                 <td className="py-1 border-r border-black" style={{ fontSize: '12px' }}>&nbsp;</td>
                                                 <td className="py-1 border-r border-black" style={{ fontSize: '12px' }}>&nbsp;</td>
                                                 <td className="py-1 border-r border-black" style={{ fontSize: '12px' }}>&nbsp;</td>
-                                                {/* <td className="py-1 border-r border-black" style={{ fontSize: '12px' }}>&nbsp;</td>
                                                 <td className="py-1 border-r border-black" style={{ fontSize: '12px' }}>&nbsp;</td>
-                                                <td className="py-1 border-r border-black" style={{ fontSize: '12px' }}>&nbsp;</td> */}
+                                                <td className="py-1 border-r border-black" style={{ fontSize: '12px' }}>&nbsp;</td>
+                                                <td className="py-1 border-r border-black" style={{ fontSize: '12px' }}>&nbsp;</td>
                                             </tr>
                                         ))}
 
@@ -376,18 +376,18 @@ const PrintableBill = ({ billData = {}, companyDetails = {} }) => {
                                                     <>
                                                         {/* Totals Section */}
                                                         <div className="p-1 mb-1">
-                                                            {/* <div className="flex justify-between mb-1">
+                                                            <div className="flex justify-between mb-1">
                                                                 <span className="font-semibold" style={{ fontSize: '12px' }}>Subtotal:</span>
                                                                 <span style={{ fontSize: '12px' }}>{formatCurrency(totals.subtotal)}</span>
-                                                            </div> */}
-                                                            {/* <div className="flex justify-between mb-1">
+                                                            </div>
+                                                            <div className="flex justify-between mb-1">
                                                                 <span className="font-semibold " style={{ fontSize: '12px' }}>CGST:</span>
                                                                 <span style={{ fontSize: '12px' }}>{formatCurrency(totals.gstTotal)}</span>
                                                             </div>
                                                             <div className="flex justify-between mb-1">
                                                                 <span className="font-semibold " style={{ fontSize: '12px' }}>SGST:</span>
                                                                 <span style={{ fontSize: '12px' }}>{formatCurrency(totals.sgstTotal)}</span>
-                                                            </div> */}
+                                                            </div>
 
                                                             <div className="mt-1 mb-1 border-t border-black pt-1">
                                                                 <span className="font-bold text-md" style={{ fontSize: '12px' }}>{billData.isOutstandingPaymentOnly ? 'Total Credit:' : 'Grand Total:'}</span>
