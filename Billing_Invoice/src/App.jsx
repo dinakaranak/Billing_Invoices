@@ -1,8 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 // Admin Components
-import LoginPage from './Component/Admin/LoginPage';
 import SignupPage from './Component/Admin/Pages/SignupPage';
 import SideNavbar from './Component/Admin/SideNavbar';
 import Dashboard from './Component/Admin/Pages/Dashboard';
@@ -22,7 +21,6 @@ import SellerBills from './Component/Admin/pages/SellerBills';
 import Expenditure from './Component/Admin/Pages/Expenditure';
 
 // Cashier Components
-import UserLogin from './Component/Invoice/UserLogin';
 import AuthWrapper from './Component/Invoice/AuthWrapper';
 import Header from './Component/Invoice/Header';
 import BillingSystem from './Component/Invoice/BillingSystem';
@@ -30,7 +28,9 @@ import Sales from './Component/Invoice/Sales';
 import Transaction from './Component/Invoice/Transaction';
 import PrintableBill from './Component/Invoice/PrintableBill';
 import Reports from './Component/Invoice/Reports';
-import HomeLogin from './Component/HomeLogin';
+
+// Unified Login Component
+import UnifiedLogin from './Component/Admin/UnifiedLogin';
 
 const MainLayout = ({ activePage, setActivePage }) => (
   <div className="flex flex-col h-screen overflow-hidden">
@@ -75,10 +75,9 @@ function App() {
     <Router>
       <Routes>
         {/* Landing page with login options */}
-        <Route path="/" element={<HomeLogin />} />
+        <Route path="/" element={<UnifiedLogin />} />
         
         {/* Admin Routes */}
-        <Route path="/admin-login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route
           path="/admin"
@@ -88,7 +87,8 @@ function App() {
         />
         
         {/* Cashier Routes */}
-        <Route path='/login' element={<UserLogin />} />
+        <Route path='/login' element={<UnifiedLogin initialMode="user" />} />
+        <Route path="/admin-login" element={<UnifiedLogin initialMode="admin" />} />
         <Route path="/billing" element={
           <AuthWrapper>
             <div className="flex flex-col h-screen">
