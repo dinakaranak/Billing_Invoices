@@ -7,6 +7,7 @@ import SideNavbar from './Component/Admin/SideNavbar';
 import Dashboard from './Component/Admin/Pages/Dashboard';
 import Products from './Component/Admin/Pages/Products';
 import Customers from './Component/Admin/pages/Customers';
+
 import ProductStockList from './Component/Admin/pages/ProductStockList';
 import StockDashboard from './Component/Admin/pages/StockDashboard';
 import AdminProfile from './Component/Admin/AdminProfile';
