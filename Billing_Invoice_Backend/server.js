@@ -19,6 +19,7 @@ const Admin = require('./models/Admin');
 const customerRoutes = require('./routes/customerRoutes');
 const sellerbillRoutes = require('./routes/sellerBills');
 const expensesRoutes = require('./routes/expenses');
+const marketingRoutes = require('./routes/marketing');
 
 const app = express();
 
@@ -88,6 +89,7 @@ app.use('/api/credentials', credentialRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/seller-bills', sellerbillRoutes);
 app.use('/api/expenses', expensesRoutes);
+app.use('/api/marketing', marketingRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

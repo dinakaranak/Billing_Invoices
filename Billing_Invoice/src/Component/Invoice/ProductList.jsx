@@ -10,6 +10,8 @@ import * as ReactDOMClient from 'react-dom/client';
 import PrintableBill from './PrintableBill';
 import ThermalPrintableBill from './ThermalPrintableBill';
 import api from '../../service/api';
+import { FiDollarSign } from "react-icons/fi";
+import SettlementModal from './SettlementModal';
 
 function ProductList({ products, onAdd, onEdit, onRemove, transportCharge, paymentMethod, onPaymentMethodChange,
   onTransportChargeChange = (value) => { }, }) {
@@ -49,6 +51,9 @@ function ProductList({ products, onAdd, onEdit, onRemove, transportCharge, payme
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [recentBills, setRecentBills] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [showSettlementModal, setShowSettlementModal] = useState(false);
+  const [settlementData, setSettlementData] = useState([]);
+  const [isLoadingSettlement, setIsLoadingSettlement] = useState(false);
   const unitTypes = [
     { value: 'piece', label: 'Pcs' },
     { value: 'box', label: 'Box' },
@@ -452,117 +457,117 @@ function ProductList({ products, onAdd, onEdit, onRemove, transportCharge, payme
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!product.code || !product.quantity) {
-    toast.error("Product code and quantity are required!");
-    return;
-  }
-
-  const quantityValue = parseFloat(product.quantity);
-  if (isNaN(quantityValue) || quantityValue <= 0) {
-    toast.error("Please enter a valid quantity!");
-    return;
-  }
-
-  // Get the selected unit (default to base unit if not selected)
-  const selectedUnit = product.selectedUnit || product.baseUnit;
-
-  // Check if product with same code AND same unit already exists in the list
-  const existingProductIndex = products.findIndex(
-    (item) => item.code === product.code && item.unit === selectedUnit
-  );
-
-  if (existingProductIndex !== -1 && editingIndex === null) {
-    // Product with same code and unit exists and we're not in edit mode - update the quantity
-    const existingProduct = products[existingProductIndex];
-    
-    // Check stock availability for the additional quantity
-    const stockCheck = await checkStockAvailability(
-      product.name,
-      quantityValue + existingProduct.quantity, // Total quantity after update
-      selectedUnit
-    );
-
-    if (!stockCheck.isAvailable) {
-      const availableInRequestedUnit = stockCheck.availableDisplay.toFixed(2);
-      const requestedUnit = selectedUnit;
-
-      await Swal.fire({
-        title: 'Insufficient Stock',
-        html: `Only <b>${availableInRequestedUnit} ${requestedUnit}</b> available for <b>${product.name}</b>`,
-        icon: 'warning',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#3085d6',
-      });
+    if (!product.code || !product.quantity) {
+      toast.error("Product code and quantity are required!");
       return;
     }
 
-    // Update the existing product
-    const updatedProduct = {
-      ...existingProduct,
-      quantity: existingProduct.quantity + quantityValue,
-      totalPrice: existingProduct.totalPrice + product.totalPrice
-    };
-
-    onEdit(existingProductIndex, updatedProduct);
-    toast.success(`Updated quantity for ${product.name} (${selectedUnit})`);
-  } else {
-    // Either product doesn't exist with this unit or we're editing - proceed with normal flow
-    const stockCheck = await checkStockAvailability(
-      product.name,
-      quantityValue,
-      selectedUnit
-    );
-
-    if (!stockCheck.isAvailable) {
-      const availableInRequestedUnit = stockCheck.availableDisplay.toFixed(2);
-      const requestedUnit = selectedUnit;
-
-      await Swal.fire({
-        title: 'Insufficient Stock',
-        html: `Only <b>${availableInRequestedUnit} ${requestedUnit}</b> available for <b>${product.name}</b>`,
-        icon: 'warning',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#3085d6',
-      });
+    const quantityValue = parseFloat(product.quantity);
+    if (isNaN(quantityValue) || quantityValue <= 0) {
+      toast.error("Please enter a valid quantity!");
       return;
     }
 
-    const newProduct = {
-      ...product,
-      id: Date.now(),
-      quantity: quantityValue,
-      price: parseFloat(product.price),
-      basicPrice: product.basicPrice,
-      gstAmount: product.gstAmount,
-      sgstAmount: product.sgstAmount,
-      totalPrice: product.totalPrice,
-      unit: selectedUnit, // Use the selected unit
-      isManualPrice: product.isManualPrice,
-      availableStock: stockCheck.available,
-      hsnCode: product.hsnCode
-    };
+    // Get the selected unit (default to base unit if not selected)
+    const selectedUnit = product.selectedUnit || product.baseUnit;
 
-    if (editingIndex !== null) {
-      onEdit(editingIndex, newProduct);
-      setEditingIndex(null);
-      toast.success(`Updated ${product.name} (${selectedUnit})`);
+    // Check if product with same code AND same unit already exists in the list
+    const existingProductIndex = products.findIndex(
+      (item) => item.code === product.code && item.unit === selectedUnit
+    );
+
+    if (existingProductIndex !== -1 && editingIndex === null) {
+      // Product with same code and unit exists and we're not in edit mode - update the quantity
+      const existingProduct = products[existingProductIndex];
+
+      // Check stock availability for the additional quantity
+      const stockCheck = await checkStockAvailability(
+        product.name,
+        quantityValue + existingProduct.quantity, // Total quantity after update
+        selectedUnit
+      );
+
+      if (!stockCheck.isAvailable) {
+        const availableInRequestedUnit = stockCheck.availableDisplay.toFixed(2);
+        const requestedUnit = selectedUnit;
+
+        await Swal.fire({
+          title: 'Insufficient Stock',
+          html: `Only <b>${availableInRequestedUnit} ${requestedUnit}</b> available for <b>${product.name}</b>`,
+          icon: 'warning',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#3085d6',
+        });
+        return;
+      }
+
+      // Update the existing product
+      const updatedProduct = {
+        ...existingProduct,
+        quantity: existingProduct.quantity + quantityValue,
+        totalPrice: existingProduct.totalPrice + product.totalPrice
+      };
+
+      onEdit(existingProductIndex, updatedProduct);
+      toast.success(`Updated quantity for ${product.name} (${selectedUnit})`);
     } else {
-      onAdd(newProduct);
-      toast.success(`Added ${product.name} (${selectedUnit})`);
+      // Either product doesn't exist with this unit or we're editing - proceed with normal flow
+      const stockCheck = await checkStockAvailability(
+        product.name,
+        quantityValue,
+        selectedUnit
+      );
+
+      if (!stockCheck.isAvailable) {
+        const availableInRequestedUnit = stockCheck.availableDisplay.toFixed(2);
+        const requestedUnit = selectedUnit;
+
+        await Swal.fire({
+          title: 'Insufficient Stock',
+          html: `Only <b>${availableInRequestedUnit} ${requestedUnit}</b> available for <b>${product.name}</b>`,
+          icon: 'warning',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#3085d6',
+        });
+        return;
+      }
+
+      const newProduct = {
+        ...product,
+        id: Date.now(),
+        quantity: quantityValue,
+        price: parseFloat(product.price),
+        basicPrice: product.basicPrice,
+        gstAmount: product.gstAmount,
+        sgstAmount: product.sgstAmount,
+        totalPrice: product.totalPrice,
+        unit: selectedUnit, // Use the selected unit
+        isManualPrice: product.isManualPrice,
+        availableStock: stockCheck.available,
+        hsnCode: product.hsnCode
+      };
+
+      if (editingIndex !== null) {
+        onEdit(editingIndex, newProduct);
+        setEditingIndex(null);
+        toast.success(`Updated ${product.name} (${selectedUnit})`);
+      } else {
+        onAdd(newProduct);
+        toast.success(`Added ${product.name} (${selectedUnit})`);
+      }
     }
-  }
 
-  setProduct(initialProduct);
-  setNameSuggestions([]);
+    setProduct(initialProduct);
+    setNameSuggestions([]);
 
-  // Focus on product code input after submission
-  setTimeout(() => {
-    productCodeInputRef.current?.focus();
-  }, 0);
-};
+    // Focus on product code input after submission
+    setTimeout(() => {
+      productCodeInputRef.current?.focus();
+    }, 0);
+  };
 
   const handleEdit = (index) => {
     const productToEdit = products[index];
@@ -583,16 +588,16 @@ const handleSubmit = async (e) => {
   const filteredProducts = products.filter((item) => {
     // Create a normalized version of the search term (case insensitive)
     const normalizedSearchTerm = searchTerm.toLowerCase().trim();
-    
+
     // If search term is empty, show all products
     if (!normalizedSearchTerm) return true;
-    
+
     // Check if code matches (case insensitive)
     const codeMatch = item.code.toLowerCase().includes(normalizedSearchTerm);
-    
+
     // Check if name matches (case insensitive)
     const nameMatch = item.name.toLowerCase().includes(normalizedSearchTerm);
-    
+
     // Return true if either code or name matches
     return codeMatch || nameMatch;
   });
@@ -716,6 +721,124 @@ const handleSubmit = async (e) => {
     }
   };
 
+
+  const fetchSettlementData = async () => {
+    try {
+      setIsLoadingSettlement(true);
+      const today = new Date().toISOString().split('T')[0];
+      const response = await api.get(`/bills/settlement?date=${today}`);
+      setSettlementData(response.data);
+      setShowSettlementModal(true);
+    } catch (error) {
+      console.error('Error fetching settlement data:', error);
+      toast.error('Failed to load settlement data');
+    } finally {
+      setIsLoadingSettlement(false);
+    }
+  };
+
+  const handlePrintSettlement = async (data) => {
+    try {
+      const companyRes = await api.get('/companies');
+      const companyDetails = companyRes.data[0];
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+      <html>
+        <head>
+          <title>Settlement Report - ${new Date().toLocaleDateString()}</title>
+          <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        </head>
+        <body class="bg-white">
+          <div id="print-root"></div>
+          <script>
+            window.onload = function() {
+              setTimeout(() => {
+                window.print();
+                setTimeout(() => window.close(), 500);
+              }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+
+      printWindow.document.close();
+
+      const rootElement = printWindow.document.getElementById('print-root');
+      const root = ReactDOMClient.createRoot(rootElement);
+
+      // Calculate totals
+      const totalSales = data.reduce((sum, item) => sum + (item.totalSales || 0), 0);
+      const totalQuantity = data.reduce((sum, item) => sum + (item.totalQuantity || 0), 0);
+
+      root.render(
+        <div className="p-6">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold">Settlement Report</h1>
+            <p className="text-gray-600">{new Date().toLocaleDateString()}</p>
+            {companyDetails && (
+              <div className="mt-2">
+                <h2 className="text-xl font-semibold">{companyDetails.companyName}</h2>
+                <p>{companyDetails.address}, {companyDetails.city}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="bg-blue-50 p-3 rounded text-center">
+              <p className="font-semibold">Total Products</p>
+              <p className="text-xl font-bold">{data.length}</p>
+            </div>
+            <div className="bg-green-50 p-3 rounded text-center">
+              <p className="font-semibold">Total Quantity</p>
+              <p className="text-xl font-bold">{totalQuantity}</p>
+            </div>
+            <div className="bg-purple-50 p-3 rounded text-center">
+              <p className="font-semibold">Total Sales</p>
+              <p className="text-xl font-bold">₹{totalSales.toFixed(2)}</p>
+            </div>
+          </div>
+
+          <table className="min-w-full border-collapse border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border border-gray-300 px-4 py-2 text-left">Product Code</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">Product Name</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">Quantity</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">Total Sales</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr key={index}>
+                  <td className="border border-gray-300 px-4 py-2">{item.productCode}</td>
+                  <td className="border border-gray-300 px-4 py-2">{item.productName}</td>
+                  <td className="border border-gray-300 px-4 py-2">{item.totalQuantity}</td>
+                  <td className="border border-gray-300 px-4 py-2">₹{item.totalSales.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="bg-gray-50 font-bold">
+                <td className="border border-gray-300 px-4 py-2" colSpan="2">TOTAL</td>
+                <td className="border border-gray-300 px-4 py-2">{totalQuantity}</td>
+                <td className="border border-gray-300 px-4 py-2">₹{totalSales.toFixed(2)}</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div className="mt-6 text-sm text-gray-500 text-center">
+            Printed on: {new Date().toLocaleString()}
+          </div>
+        </div>
+      );
+    } catch (error) {
+      console.error('Error printing settlement:', error);
+      toast.error('Failed to print settlement report');
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Product Form */}
@@ -738,7 +861,7 @@ const handleSubmit = async (e) => {
             </div>
             <div className="flex items-center gap-2">
               <button
-                type="button" // Important: Make sure this is type="button" to prevent form submission
+                type="button"
                 ref={historyButtonRef}
                 onClick={fetchRecentBills}
                 onMouseEnter={() => setIsMouseOverHistory(true)}
@@ -1022,13 +1145,27 @@ const handleSubmit = async (e) => {
         {/* Transport Charge Input */}
         <div className="bg-gray-50 p-2 border-t">
           <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 w-full'>
-            <div>
+            <div className='flex flex-row gap-2'>
               <button
                 onClick={() => setShowCalculator(true)}
                 className="px-3 py-1.5 text-sm font-normal text-white bg-gray-500 rounded-md hover:bg-gray-700 transition-colors flex items-center gap-1"
               >
                 Calculator
               </button>
+               {/* Add this settlement button */}
+            <button
+              type="button"
+              onClick={fetchSettlementData}
+              disabled={isLoadingSettlement}
+              className="flex items-center rounded-md gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+            >
+              {/* {isLoadingSettlement ? (
+                <FiRefreshCw className="animate-spin" />
+              ) : (
+                <FiDollarSign className="text-base" />
+              )} */}
+              Settlement
+            </button>
             </div>
 
             <div className="flex items-center gap-2">
@@ -1214,6 +1351,14 @@ const handleSubmit = async (e) => {
           )}
         </div>
       </Modal>
+
+      {showSettlementModal && (
+        <SettlementModal
+          data={settlementData}
+          onClose={() => setShowSettlementModal(false)}
+          onPrint={() => handlePrintSettlement(settlementData)}
+        />
+      )}
     </div>
   );
 }

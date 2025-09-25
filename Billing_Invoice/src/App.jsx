@@ -31,6 +31,7 @@ import Reports from './Component/Invoice/Reports';
 
 // Unified Login Component
 import UnifiedLogin from './Component/Admin/UnifiedLogin';
+import Marketing from './Component/Admin/Pages/Marketing';
 
 const MainLayout = ({ activePage, setActivePage }) => (
   <div className="flex flex-col h-screen overflow-hidden">
@@ -54,6 +55,7 @@ const MainLayout = ({ activePage, setActivePage }) => (
         {activePage === 'Seller Bills uploaded' && <SellerBills />}
         {activePage === 'User Management' && <UserManagement setActivePage={setActivePage} />}
         {activePage ==='Expenditure' && <Expenditure />}
+        {activePage ==='Marketing' && <Marketing />}
       </main>
     </div>
   </div>

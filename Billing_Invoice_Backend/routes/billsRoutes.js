@@ -74,6 +74,61 @@ router.get('/unpaid', async (req, res) => {
 });
 
 
+router.get('/settlement', async (req, res) => {
+  try {
+    const { date } = req.query;
+    
+    if (!date) {
+      return res.status(400).json({ message: 'Date parameter is required' });
+    }
+    
+    // Create start and end of the day
+    const startDate = new Date(date);
+    startDate.setHours(0, 0, 0, 0);
+    
+    const endDate = new Date(date);
+    endDate.setHours(23, 59, 59, 999);
+    
+    // Get all bills for the date
+    const bills = await Bill.find({
+      createdAt: { $gte: startDate, $lte: endDate },
+      status: { $in: ['paid', 'partial'] } // Only include paid or partially paid bills
+    });
+    
+    // Aggregate product sales
+    const productSales = {};
+    
+    bills.forEach(bill => {
+      if (bill.products && bill.products.length > 0) {
+        bill.products.forEach(product => {
+          const key = `${product.code}-${product.name}`;
+          
+          if (!productSales[key]) {
+            productSales[key] = {
+              productCode: product.code,
+              productName: product.name,
+              totalQuantity: 0,
+              totalSales: 0
+            };
+          }
+          
+          productSales[key].totalQuantity += product.quantity || 0;
+          productSales[key].totalSales += product.totalPrice || 0;
+        });
+      }
+    });
+    
+    // Convert to array and sort by total sales (descending)
+    const result = Object.values(productSales).sort((a, b) => b.totalSales - a.totalSales);
+    
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error generating settlement report:', error);
+    res.status(500).json({ message: 'Failed to generate settlement report', error: error.message });
+  }
+});
+
+
 router.post('/settle-outstanding', async (req, res) => {
     try {
         const {
