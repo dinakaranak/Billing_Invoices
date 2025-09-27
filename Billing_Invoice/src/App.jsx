@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 // Admin Components
@@ -43,20 +43,20 @@ const MainLayout = ({ activePage, setActivePage }) => (
         {activePage === 'Dashboard' && (
           <Dashboard setActivePage={setActivePage} />
         )}
-        {activePage === 'Products' && <Products setActivePage={setActivePage}/>}
+        {activePage === 'Products' && <Products setActivePage={setActivePage} />}
         {activePage === 'Billing / Invoices' && <BillingInvoices />}
         {activePage === 'Customers' && <Customers />}
         {activePage === 'Credit Dues' && <CreditDue />}
-        {activePage === 'Product Stock List' && <ProductStockList setActivePage={setActivePage}/>}
-        {activePage === 'Stock Summary' && <StockDashboard setActivePage={setActivePage}/>}
+        {activePage === 'Product Stock List' && <ProductStockList setActivePage={setActivePage} />}
+        {activePage === 'Stock Summary' && <StockDashboard setActivePage={setActivePage} />}
         {activePage === 'ProfitReport' && <ProfitReport />}
         {activePage === 'Expense Menu' && <SellerExpenseList />}
-        {activePage === 'Billing Reports' && <BillingReports/>}
+        {activePage === 'Billing Reports' && <BillingReports />}
         {activePage === 'Admin Management' && <AdminProfile />}
         {activePage === 'Seller Bills uploaded' && <SellerBills />}
         {activePage === 'User Management' && <UserManagement setActivePage={setActivePage} />}
-        {activePage ==='Expenditure' && <Expenditure />}
-        {activePage ==='Marketing' && <Marketing />}
+        {activePage === 'Expenditure' && <Expenditure />}
+        {activePage === 'Marketing' && <Marketing />}
       </main>
     </div>
   </div>
@@ -75,11 +75,11 @@ function App() {
   }, [activePage]);
 
   return (
-    <Router>
+    <HashRouter>
       <Routes>
         {/* Landing page with login options */}
         <Route path="/" element={<UnifiedLogin />} />
-        
+
         {/* Admin Routes */}
         <Route path="/signup" element={<SignupPage />} />
         <Route
@@ -88,7 +88,7 @@ function App() {
             <MainLayout activePage={activePage} setActivePage={setActivePage} />
           }
         />
-        
+
         {/* Cashier Routes */}
         <Route path='/login' element={<UnifiedLogin initialMode="user" />} />
         <Route path="/admin-login" element={<UnifiedLogin initialMode="admin" />} />
@@ -98,15 +98,15 @@ function App() {
               <Header />
               <div className="flex-1 overflow-hidden">
                 <BillingSystem
-                  onFocusProductSearch={() => {}}
-                  onFocusProductCode={() => {}}
-                  onFocusQuantity={() => {}}
-                  onTriggerAddProduct={() => {}}
-                  onFocusCustomerName={() => {}}
-                  onFocusPhoneNumber={() => {}}
-                  onTriggerHold={() => {}}
-                  onTriggerPrint={() => {}}
-                  onTriggerPayment={() => {}}
+                  onFocusProductSearch={() => { }}
+                  onFocusProductCode={() => { }}
+                  onFocusQuantity={() => { }}
+                  onTriggerAddProduct={() => { }}
+                  onFocusCustomerName={() => { }}
+                  onFocusPhoneNumber={() => { }}
+                  onTriggerHold={() => { }}
+                  onTriggerPrint={() => { }}
+                  onTriggerPayment={() => { }}
                 />
               </div>
             </div>
@@ -138,7 +138,8 @@ function App() {
           </AuthWrapper>
         } />
       </Routes>
-    </Router>
+    </HashRouter>
+
   );
 }
 
